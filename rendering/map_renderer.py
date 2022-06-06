@@ -100,25 +100,35 @@ class MapRenderer:
 
     def draw_mesh_2d(self):
         meshes = []
+        # for ctgr_idx, category in enumerate(self.categories):
+        #     vertices = self.vert_packs[ctgr_idx].copy()
+        #     vertices = np.reshape(vertices, (-1, 8, 3))
+        #     tri_2d_count = vertices.shape[0]
+        #     vertices = vertices[:, 0:4]
+        #     vertices = np.reshape(vertices, (-1, 3))
+        #     triangles = self.get_triangle_2d(tri_2d_count)
+        #     triangles = np.reshape(triangles, (-1, 3))
+        #     mesh = self.create_mesh_object(vertices, triangles, self.ctgr_colors[ctgr_idx])
+        #     meshes.append(mesh)
         for ctgr_idx, category in enumerate(self.categories):
-            vertices = self.vert_packs[ctgr_idx]
-            vertices = np.reshape(vertices, (-1, 8, 3))
+            # if ctgr_idx == 0:
+            #     continue
+            vertices = self.vert_packs[ctgr_idx].copy()
+            vertices = np.reshape(vertices, (-1, 8, 3))[:, 0:4]
             tri_2d_count = vertices.shape[0]
-            vertices = vertices[:, 0:4]
             vertices = np.reshape(vertices, (-1, 3))
             triangles = self.get_triangle_2d(tri_2d_count)
             triangles = np.reshape(triangles, (-1, 3))
             mesh = self.create_mesh_object(vertices, triangles, self.ctgr_colors[ctgr_idx])
             meshes.append(mesh)
-        mesh_frame = o3d.geometry.TriangleMesh.create_coordinate_frame(size=1, origin=[0, 0, 0])
-        meshes.append(mesh_frame)
         o3d.visualization.draw_geometries(meshes)
 
     def draw_mesh_3d(self):
         meshes = []
+        meshes_ceiling = self.draw_ceiling()
+        meshes += meshes_ceiling
         for ctgr_idx, category in enumerate(self.categories):
             vertices = self.vert_packs[ctgr_idx]
-
             triangles = self.tria_packs[ctgr_idx]
             triangles = np.reshape(triangles, (-1, 3))
             mesh = self.create_mesh_object(vertices, triangles, self.ctgr_colors[ctgr_idx])
@@ -126,6 +136,23 @@ class MapRenderer:
         mesh_frame = o3d.geometry.TriangleMesh.create_coordinate_frame(size=1, origin=[-0.5, -0.5, 0])
         meshes.append(mesh_frame)
         o3d.visualization.draw_geometries(meshes)
+
+    def draw_ceiling(self):
+        meshes = []
+        for ctgr_idx, category in enumerate(self.categories):
+            if ctgr_idx == 0:
+                continue
+            vertices = self.vert_packs[ctgr_idx].copy()
+            vertices = np.reshape(vertices, (-1, 8, 3))[:, 0:4]
+            tri_2d_count = vertices.shape[0]
+            for vert in vertices:
+                vert[:, 2] = 3
+            vertices = np.reshape(vertices, (-1, 3))
+            triangles = self.get_triangle_2d(tri_2d_count)
+            triangles = np.reshape(triangles, (-1, 3))
+            mesh = self.create_mesh_object(vertices, triangles, self.ctgr_colors[ctgr_idx])
+            meshes.append(mesh)
+        return meshes
 
     def create_mesh_object(self, vertices, triangles, color):
         vert = o3d.utility.Vector3dVector(vertices)
@@ -137,7 +164,7 @@ class MapRenderer:
 
 
 if __name__ == "__main__":
-    file = '/home/cheetah/lee_ws/3D-Map-Renderer/sample_map/sample.txt'
+    file = '/home/cheetah/lee_ws/3D-Map-Renderer/sample_map/sample2.txt'
     Map = MapRenderer(file)
 
 
