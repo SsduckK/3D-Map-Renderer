@@ -5,6 +5,7 @@ import cv2
 
 class MapRenderer:
     def __init__(self, filename):
+        self.USE_OBSTACLE = True
         self.categories = ["nothing", "floor", "wall", "door", "obstacle", "window"]
         self.ctgr_heights = [0, 0.1, 3, 2, 1, 2]
         # TODO
@@ -19,6 +20,8 @@ class MapRenderer:
     def read_map(self, filename):
         with open(filename, 'r') as f:
             map = np.loadtxt(f)
+        if self.USE_OBSTACLE == False:
+            np.place(map, map == 4, 1)
         map = map.astype(int)
         map = np.flip(map, 0)
         return map
@@ -180,7 +183,7 @@ class MapRenderer:
 
 
 if __name__ == "__main__":
-    file = '/home/cheetah/lee_ws/3D-Map-Renderer/sample_map/sample_18_1.txt'
+    file = '/home/cheetah/lee_ws/3D-Map-Renderer/sample_map/sample_18_2.txt'
     Map = MapRenderer(file)
 
 
