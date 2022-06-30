@@ -124,11 +124,12 @@ class GridMapRenderer:
 		return unq_vert, convert_tri
 
 	def draw_2d(self):
-		map_2d = np.flip(self.map.copy(), 0)
-		map_2d = np.flip(self.map.copy(), 0)
+		with open(map, 'r') as f:
+			grid_map = np.loadtxt(f)
+		map_2d = grid_map
 		x_axis, y_axis = map_2d.shape
 		img = np.zeros((x_axis * 10, y_axis * 10, 3), np.uint8) + 255
-		for ctgr_idx, category in enumerate(self.categories):
+		for ctgr_idx, category in enumerate(self.ctgr_colors):
 			color = self.ctgr_colors[ctgr_idx].copy()
 			color = [color[i] * 255 for i in range(len(color))]
 			color[0], color[2] = color[2], color[0]
