@@ -6,8 +6,9 @@ import cv2
 class MapRenderer:
     def __init__(self, filename):
         self.USE_OBSTACLE = True
+        self.SEMANTIC = False
         self.categories = ["nothing", "floor", "wall", "door", "obstacle", "window"]
-        self.ctgr_heights = [0, 0.1, 3, 2, 1, 2]
+        self.ctgr_heights = [0, 0.1, 9, 6, 3, 6]
         # TODO
         self.ctgr_colors = [[0, 0, 0], [1, 1, 1], [0.6, 0.6, 0.6], [0.6, 0.4, 0], [1, 1, 0], [0.058, 0.878, 1]]
         self.map = self.read_map(filename)
@@ -20,6 +21,10 @@ class MapRenderer:
     def read_map(self, filename):
         with open(filename, 'r') as f:
             map = np.loadtxt(f)
+        if self.SEMANTIC == False:
+            np.place(map, map == 3, 2)
+            np.place(map, map == 4, 2)
+            np.place(map, map == 5, 2)
         if self.USE_OBSTACLE == False:
             np.place(map, map == 4, 1)
         map = map.astype(int)
@@ -38,6 +43,7 @@ class MapRenderer:
             vertices = self.get_cube_vertices(grid_xyz, self.ctgr_heights[c])
             vert_packs[c] = vertices
             # (N, 8, 3) 8 = num triangles per cube
+            print(grid_xyz.shape[0])
             triangles = self.get_triangles(grid_xyz.shape[0])
             tria_packs[c] = triangles
         return vert_packs, tria_packs
