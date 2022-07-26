@@ -6,7 +6,7 @@ import cv2
 class MapRenderer:
     def __init__(self, filename):
         self.USE_OBSTACLE = True
-        self.SEMANTIC = False
+        self.SEMANTIC = True
         self.categories = ["nothing", "floor", "wall", "door", "obstacle", "window"]
         self.ctgr_heights = [0, 0.1, 9, 6, 3, 6]
         # TODO
@@ -65,6 +65,7 @@ class MapRenderer:
         vertices = np.stack(vertices, axis=1)
         # (N*8, 3)
         vertices = np.reshape(vertices, (-1, 3))
+        print(type(vertices))
         return vertices
 
     def get_triangles(self, num_tri):
@@ -89,7 +90,7 @@ class MapRenderer:
                               [4, 5, 6],
                               [6, 5, 7],
                               #bottom
-                              [2, 1, 0],
+                              [2, 1, 0],        
                               [3, 1, 2],
                               ], dtype=np.int32)
         # (N, 8, 3)
@@ -183,13 +184,17 @@ class MapRenderer:
         vert = o3d.utility.Vector3dVector(vertices)
         tri = o3d.utility.Vector3iVector(triangles)
         mesh = o3d.geometry.TriangleMesh(vert, tri)
+        print("Before", mesh)
+        mesh = o3d.geometry.TriangleMesh.remove_duplicated_vertices(mesh)
+        mesh = o3d.geometry.TriangleMesh.remove_duplicated_triangles(mesh)
+        print("After", mesh)
         mesh.compute_vertex_normals()
         mesh.paint_uniform_color(color)
         return mesh
 
 
 if __name__ == "__main__":
-    file = '/home/cheetah/lee_ws/3D-Map-Renderer/sample_map/sample_18_2.txt'
+    file = '/home/cheetah/lee_ws/3D-Map-Renderer/sample_map/sample_18_1.txt'
     Map = MapRenderer(file)
 
 

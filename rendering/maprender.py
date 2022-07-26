@@ -114,6 +114,7 @@ class GridMapRenderer:
 			conv1, conv2, conv3 = vert_index[first], vert_index[second], vert_index[third]
 			convert_tri.append([conv1, conv2, conv3])
 		convert_tri = np.reshape(convert_tri, (-1, 3))
+		o3d.geometry.TriangleMesh.remove_duplicated_triangles()
 		# print(convert_tri)
 		# print(convert_tri.shape)
 		# updated_tri = new_trias[np.sort(tri_idx)]
@@ -155,9 +156,11 @@ class GridMapRenderer:
 		vert = o3d.utility.Vector3dVector(vertices)
 		tri = o3d.utility.Vector3iVector(triangle)
 		mesh = o3d.geometry.TriangleMesh(vert, tri)
+		print(mesh)
 		mesh.compute_vertex_normals()
 		mesh.paint_uniform_color(color)
 		return mesh
+
 
 if __name__ == "__main__":
 	map = '/home/cheetah/lee_ws/3D-Map-Renderer/sample_map/sample_18_1.txt'

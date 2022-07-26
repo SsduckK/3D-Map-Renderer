@@ -10,7 +10,9 @@ def update_mesh():
     mesh_trias = np.array([[0, 1, 2], [3, 4, 5], [2, 4, 6]])
 
     mesh_verts_3d = mesh_verts.reshape((-1, 1, 2))     # (M, 1, 3)
+    print(mesh_verts_3d)
     new_verts_3d = new_verts.reshape((1, -1, 2))       # (1, N, 3)
+    print(new_verts_3d)
     match = (mesh_verts_3d == new_verts_3d).all(axis=-1)    # (M, N)
     print("mesh vs new match:\n", match)
     mesh_inds, new_inds = match.nonzero()
